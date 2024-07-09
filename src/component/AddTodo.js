@@ -1,3 +1,4 @@
+import Axios from "axios";
 import React, { Component } from "react";
 import { Button, TextField } from "@mui/material";
 import { DesktopDatePicker , LocalizationProvider} from '@mui/x-date-pickers';
@@ -39,7 +40,25 @@ class AddTodo extends Component {
   handleSubmit = (event) => {
     event.preventDefault();
     if (this.state.content.trim()) {
-      this.props.addTodo(this.state);
+      const jsonObject = {
+        id: new Date().getTime(),
+        // id: this.state.id,
+        task: this.state.content,
+        currentDate: this.state.date,
+        dueDate: this.state.duedate
+     };
+     Axios({
+      method: "POST",
+      url: "http://localhost:8080/add/item",
+      data: {jsonObject},
+      headers: {
+         "Content-Type": "application/json"
+      }
+    }).then(res => {
+        console.log(res.data.message);
+    });
+
+      this.props.addTodo(jsonObject);
       this.setState({
         content: "",
         date: "",
